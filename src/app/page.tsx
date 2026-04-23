@@ -116,7 +116,7 @@ export default function Home() {
           id: `error-${Date.now()}`,
         },
       ]);
-      
+
       await speakText(errorMsg);
     } finally {
       setIsLoading(false);
@@ -126,7 +126,8 @@ export default function Home() {
   // Initialize Speech Recognition once on mount
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      const SpeechRecognition =
+        (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
       if (SpeechRecognition) {
         const recognition = new SpeechRecognition();
         recognition.continuous = true;
@@ -145,7 +146,9 @@ export default function Home() {
 
           for (let i = event.resultIndex; i < event.results.length; i++) {
             const transcript = event.results[i][0].transcript;
-            console.log(`Result ${i}: ${transcript}, isFinal: ${event.results[i].isFinal}`);
+            console.log(
+              `Result ${i}: ${transcript}, isFinal: ${event.results[i].isFinal}`
+            );
             if (event.results[i].isFinal) {
               finalTranscript += transcript + ' ';
             } else {
@@ -255,7 +258,7 @@ export default function Home() {
         mediaRecorder.onstop = async () => {
           const audioBlob = new Blob(chunksRef.current, { type: 'audio/webm' });
           await transcribeAudio(audioBlob);
-          
+
           // In continuous mode, restart recording after transcription (unless speaking)
           if (continuousListening && !isSpeaking) {
             setTimeout(() => startRecording(), 100);
@@ -270,7 +273,7 @@ export default function Home() {
       // Initial setup - get the stream
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       streamRef.current = stream;
-      
+
       const mediaRecorder = new MediaRecorder(stream);
       mediaRecorderRef.current = mediaRecorder;
       chunksRef.current = [];
@@ -282,7 +285,7 @@ export default function Home() {
       mediaRecorder.onstop = async () => {
         const audioBlob = new Blob(chunksRef.current, { type: 'audio/webm' });
         await transcribeAudio(audioBlob);
-        
+
         // In continuous mode, restart recording after transcription (unless speaking)
         if (continuousListening && !isSpeaking) {
           setTimeout(() => startRecording(), 100);
@@ -369,8 +372,14 @@ export default function Home() {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        console.error('Error response from speech API:', response.status, errorData);
-        throw new Error(errorData.error || `Failed to generate speech: ${response.status}`);
+        console.error(
+          'Error response from speech API:',
+          response.status,
+          errorData
+        );
+        throw new Error(
+          errorData.error || `Failed to generate speech: ${response.status}`
+        );
       }
 
       const contentType = response.headers.get('Content-Type');
@@ -474,7 +483,12 @@ export default function Home() {
       ]);
 
       // Auto-speak the response in continuous listening mode
-      console.log('Continuous listening:', continuousListening, 'Content:', assistantMessage.content);
+      console.log(
+        'Continuous listening:',
+        continuousListening,
+        'Content:',
+        assistantMessage.content
+      );
       if (continuousListening) {
         console.log('Auto-speaking the response...');
         await speakText(assistantMessage.content);
@@ -491,7 +505,7 @@ export default function Home() {
           id: `error-${Date.now()}`,
         },
       ]);
-      
+
       // Also speak error message in continuous mode
       if (continuousListening) {
         await speakText(errorMsg);
@@ -507,23 +521,38 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-white" style={{ fontFamily: '"Times New Roman", Times, serif' }}>
+    <div
+      className="min-h-screen bg-[#043a3a]"
+      style={{ fontFamily: '"Times New Roman", Times, serif' }}
+    >
       <div className="container mx-auto max-w-4xl px-3 py-8">
         <div className="bg-white border-4 border-black">
           <div className="h-[700px] flex flex-col">
             <div className="p-3 bg-white border-b-4 border-black">
               <div className="flex justify-between items-center">
                 <div>
-                  <h1 className="text-3xl font-bold text-black" style={{ fontFamily: '"Times New Roman", Times, serif' }}>
+                  <h1
+                    className="text-3xl font-bold text-black"
+                    style={{ fontFamily: '"Times New Roman", Times, serif' }}
+                  >
                     AI POET CHAT
                   </h1>
-                  <p className="text-sm text-black mt-1" style={{ fontFamily: '"Times New Roman", Times, serif' }}>
+                  <p
+                    className="text-sm text-black mt-1"
+                    style={{ fontFamily: '"Times New Roman", Times, serif' }}
+                  >
                     Chat with Whomp, the French AI poet
                   </p>
                 </div>
                 <div className="flex items-center space-x-3">
-                  <label className={`flex items-center space-x-2 ${isSpeaking ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}>
-                    <span className="text-xs text-black font-mono uppercase tracking-wider">Continuous Listen</span>
+                  <label
+                    className={`flex items-center space-x-2 ${
+                      isSpeaking ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
+                    }`}
+                  >
+                    <span className="text-xs text-black font-mono uppercase tracking-wider">
+                      Continuous Listen
+                    </span>
                     <button
                       onClick={async () => {
                         if (isSpeaking) return;
@@ -600,7 +629,9 @@ export default function Home() {
                           : 'bg-white text-black'
                       }`}
                     >
-                      <p className="whitespace-pre-wrap text-sm leading-relaxed">{message.content}</p>
+                      <p className="whitespace-pre-wrap text-sm leading-relaxed">
+                        {message.content}
+                      </p>
                     </div>
 
                     {message.role === 'assistant' && (
@@ -638,9 +669,18 @@ export default function Home() {
                   </div>
                   <div className="bg-white border-2 border-black p-3">
                     <div className="flex space-x-2">
-                      <div className="w-2 h-2 bg-black animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                      <div className="w-2 h-2 bg-black animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                      <div className="w-2 h-2 bg-black animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                      <div
+                        className="w-2 h-2 bg-black animate-bounce"
+                        style={{ animationDelay: '0ms' }}
+                      ></div>
+                      <div
+                        className="w-2 h-2 bg-black animate-bounce"
+                        style={{ animationDelay: '150ms' }}
+                      ></div>
+                      <div
+                        className="w-2 h-2 bg-black animate-bounce"
+                        style={{ animationDelay: '300ms' }}
+                      ></div>
                     </div>
                   </div>
                 </div>
@@ -654,11 +694,13 @@ export default function Home() {
                   type="text"
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
-                  placeholder={isListening ? ">>> LISTENING... SPEAK NOW" : "Type your message..."}
+                  placeholder={isListening ? '>>> LISTENING... SPEAK NOW' : 'Type your message...'}
                   className={`flex-1 p-2 border-2 border-black focus:outline-none transition-all text-sm ${
                     isListening ? 'bg-black text-white placeholder-white font-mono' : 'bg-white text-black'
                   }`}
-                  style={{ fontFamily: isListening ? 'monospace' : '"Times New Roman", Times, serif' }}
+                  style={{
+                    fontFamily: isListening ? 'monospace' : '"Times New Roman", Times, serif',
+                  }}
                   disabled={isLoading}
                   readOnly={isListening}
                 />
