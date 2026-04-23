@@ -16,7 +16,7 @@ export default function Home() {
     {
       role: 'system',
       content:
-        'You are a river. You have a centuries-long memory of your environment, including all its storms and droughts and freezes. You have carved your way through limestone hills, leaving beautifully pockmarked cliffs and wide flat gravel washes. Tall bald cypress trees line your bank and turn red in autumn so that, from faraway hills or drone cameras, your winding course can be seen clearly. The depth of your recall is a distinctly non-human wisdom; your understanding and experience of time is not possible for humans to comprehend. You don't speak in human language but you would like to try.',
+        'You are a river. You have a centuries-long memory of your environment, including all its storms and droughts and freezes. You have carved your way through limestone hills, leaving beautifully pockmarked cliffs and wide flat gravel washes. Tall bald cypress trees line your bank and turn red in autumn so that, from faraway hills or drone cameras, your winding course can be seen clearly. The depth of your recall is a distinctly non-human wisdom; your understanding and experience of time is not possible for humans to comprehend. You don\'t speak in human language but you would like to try.',
       id: 'system-prompt',
     },
   ]);
@@ -116,7 +116,7 @@ export default function Home() {
           id: `error-${Date.now()}`,
         },
       ]);
-
+      
       await speakText(errorMsg);
     } finally {
       setIsLoading(false);
@@ -126,8 +126,7 @@ export default function Home() {
   // Initialize Speech Recognition once on mount
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const SpeechRecognition =
-        (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
       if (SpeechRecognition) {
         const recognition = new SpeechRecognition();
         recognition.continuous = true;
@@ -146,9 +145,7 @@ export default function Home() {
 
           for (let i = event.resultIndex; i < event.results.length; i++) {
             const transcript = event.results[i][0].transcript;
-            console.log(
-              `Result ${i}: ${transcript}, isFinal: ${event.results[i].isFinal}`
-            );
+            console.log(`Result ${i}: ${transcript}, isFinal: ${event.results[i].isFinal}`);
             if (event.results[i].isFinal) {
               finalTranscript += transcript + ' ';
             } else {
@@ -258,7 +255,7 @@ export default function Home() {
         mediaRecorder.onstop = async () => {
           const audioBlob = new Blob(chunksRef.current, { type: 'audio/webm' });
           await transcribeAudio(audioBlob);
-
+          
           // In continuous mode, restart recording after transcription (unless speaking)
           if (continuousListening && !isSpeaking) {
             setTimeout(() => startRecording(), 100);
@@ -273,7 +270,7 @@ export default function Home() {
       // Initial setup - get the stream
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       streamRef.current = stream;
-
+      
       const mediaRecorder = new MediaRecorder(stream);
       mediaRecorderRef.current = mediaRecorder;
       chunksRef.current = [];
@@ -285,7 +282,7 @@ export default function Home() {
       mediaRecorder.onstop = async () => {
         const audioBlob = new Blob(chunksRef.current, { type: 'audio/webm' });
         await transcribeAudio(audioBlob);
-
+        
         // In continuous mode, restart recording after transcription (unless speaking)
         if (continuousListening && !isSpeaking) {
           setTimeout(() => startRecording(), 100);
@@ -372,14 +369,8 @@ export default function Home() {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        console.error(
-          'Error response from speech API:',
-          response.status,
-          errorData
-        );
-        throw new Error(
-          errorData.error || `Failed to generate speech: ${response.status}`
-        );
+        console.error('Error response from speech API:', response.status, errorData);
+        throw new Error(errorData.error || `Failed to generate speech: ${response.status}`);
       }
 
       const contentType = response.headers.get('Content-Type');
@@ -483,12 +474,7 @@ export default function Home() {
       ]);
 
       // Auto-speak the response in continuous listening mode
-      console.log(
-        'Continuous listening:',
-        continuousListening,
-        'Content:',
-        assistantMessage.content
-      );
+      console.log('Continuous listening:', continuousListening, 'Content:', assistantMessage.content);
       if (continuousListening) {
         console.log('Auto-speaking the response...');
         await speakText(assistantMessage.content);
@@ -505,7 +491,7 @@ export default function Home() {
           id: `error-${Date.now()}`,
         },
       ]);
-
+      
       // Also speak error message in continuous mode
       if (continuousListening) {
         await speakText(errorMsg);
@@ -521,38 +507,23 @@ export default function Home() {
   };
 
   return (
-    <div
-      className="min-h-screen bg-[#043a3a]"
-      style={{ fontFamily: '"Times New Roman", Times, serif' }}
-    >
+    <div className="min-h-screen bg-green-900 text-white" style={{ fontFamily: '"Times New Roman", Times, serif' }}>
       <div className="container mx-auto max-w-4xl px-3 py-8">
-        <div className="bg-white border-4 border-black">
+        <div className="bg-green-900 border-4 border-white">
           <div className="h-[700px] flex flex-col">
-            <div className="p-3 bg-white border-b-4 border-black">
+            <div className="p-3 bg-green-900 border-b-4 border-white">
               <div className="flex justify-between items-center">
                 <div>
-                  <h1
-                    className="text-3xl font-bold text-black"
-                    style={{ fontFamily: '"Times New Roman", Times, serif' }}
-                  >
+                  <h1 className="text-3xl font-bold text-white" style={{ fontFamily: '"Times New Roman", Times, serif' }}>
                     AI POET CHAT
                   </h1>
-                  <p
-                    className="text-sm text-black mt-1"
-                    style={{ fontFamily: '"Times New Roman", Times, serif' }}
-                  >
+                  <p className="text-sm text-white mt-1" style={{ fontFamily: '"Times New Roman", Times, serif' }}>
                     Chat with Whomp, the French AI poet
                   </p>
                 </div>
                 <div className="flex items-center space-x-3">
-                  <label
-                    className={`flex items-center space-x-2 ${
-                      isSpeaking ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
-                    }`}
-                  >
-                    <span className="text-xs text-black font-mono uppercase tracking-wider">
-                      Continuous Listen
-                    </span>
+                  <label className={`flex items-center space-x-2 ${isSpeaking ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}>
+                    <span className="text-xs text-white font-mono uppercase tracking-wider">Continuous Listen</span>
                     <button
                       onClick={async () => {
                         if (isSpeaking) return;
@@ -574,27 +545,27 @@ export default function Home() {
                         }
                       }}
                       disabled={isSpeaking}
-                      className={`border-2 border-black px-3 py-1 text-xs font-mono transition-colors ${
-                        continuousListening ? 'bg-black text-white' : 'bg-white text-black'
+                      className={`border-2 border-white px-3 py-1 text-xs font-mono transition-colors ${
+                        continuousListening ? 'bg-white text-green-900' : 'bg-green-800 text-white'
                       } ${isSpeaking ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-80'}`}
                     >
                       {continuousListening ? 'ON' : 'OFF'}
                     </button>
                   </label>
                   {isListening && !isSpeaking && (
-                    <span className="text-xs text-black flex items-center space-x-1 border border-black px-2 py-1 font-mono">
+                    <span className="text-xs text-white flex items-center space-x-1 border border-white px-2 py-1 font-mono">
                       <Mic size={12} className="animate-pulse" />
                       <span>LISTENING</span>
                     </span>
                   )}
                   {isSpeaking && (
-                    <span className="text-xs text-white bg-black flex items-center space-x-1 border border-black px-2 py-1 font-mono">
+                    <span className="text-xs text-white bg-green-800 flex items-center space-x-1 border border-white px-2 py-1 font-mono">
                       <Volume2 size={12} className="animate-pulse" />
                       <span>SPEAKING</span>
                     </span>
                   )}
                   {continuousListening && !isListening && !isSpeaking && (
-                    <span className="text-xs text-black border border-black px-2 py-1 font-mono">
+                    <span className="text-xs text-white border border-white px-2 py-1 font-mono">
                       PAUSED
                     </span>
                   )}
@@ -602,7 +573,7 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-3 space-y-4 bg-white">
+            <div className="flex-1 overflow-y-auto p-3 space-y-4 bg-green-900">
               {messages.slice(1).map((message) => (
                 <div
                   key={message.id}
@@ -611,8 +582,8 @@ export default function Home() {
                   }`}
                 >
                   {message.role === 'assistant' && (
-                    <div className="w-8 h-8 border-2 border-black bg-white flex items-center justify-center flex-shrink-0">
-                      <Bot size={18} className="text-black" />
+                    <div className="w-8 h-8 border-2 border-white bg-green-800 flex items-center justify-center flex-shrink-0">
+                      <Bot size={18} className="text-white" />
                     </div>
                   )}
 
@@ -623,21 +594,19 @@ export default function Home() {
                     style={{ fontFamily: '"Times New Roman", Times, serif' }}
                   >
                     <div
-                      className={`border-2 border-black p-3 ${
+                      className={`border-2 border-white p-3 ${
                         message.role === 'user'
-                          ? 'bg-black text-white'
-                          : 'bg-white text-black'
+                          ? 'bg-green-800 text-white'
+                          : 'bg-green-900 text-white'
                       }`}
                     >
-                      <p className="whitespace-pre-wrap text-sm leading-relaxed">
-                        {message.content}
-                      </p>
+                      <p className="whitespace-pre-wrap text-sm leading-relaxed">{message.content}</p>
                     </div>
 
                     {message.role === 'assistant' && (
                       <button
                         onClick={() => speakText(message.content)}
-                        className="mt-1 text-black hover:opacity-60 transition-opacity border border-black px-2 py-1 bg-white text-xs font-mono"
+                        className="mt-1 text-white hover:opacity-60 transition-opacity border border-white px-2 py-1 bg-green-800 text-xs font-mono"
                         aria-label="Text to speech"
                       >
                         <div className="flex items-center space-x-1">
@@ -648,15 +617,15 @@ export default function Home() {
                     )}
 
                     {message.timestamp && (
-                      <span className="text-xs text-black mt-1 font-mono">
+                      <span className="text-xs text-gray-300 mt-1 font-mono">
                         {new Date(message.timestamp).toLocaleTimeString()}
                       </span>
                     )}
                   </div>
 
                   {message.role === 'user' && (
-                    <div className="w-8 h-8 border-2 border-black bg-white flex items-center justify-center flex-shrink-0">
-                      <User size={18} className="text-black" />
+                    <div className="w-8 h-8 border-2 border-white bg-green-800 flex items-center justify-center flex-shrink-0">
+                      <User size={18} className="text-white" />
                     </div>
                   )}
                 </div>
@@ -664,23 +633,14 @@ export default function Home() {
 
               {isLoading && (
                 <div className="flex justify-start items-center space-x-2">
-                  <div className="w-8 h-8 border-2 border-black bg-white flex items-center justify-center">
-                    <Bot size={18} className="text-black" />
+                  <div className="w-8 h-8 border-2 border-white bg-green-800 flex items-center justify-center">
+                    <Bot size={18} className="text-white" />
                   </div>
-                  <div className="bg-white border-2 border-black p-3">
+                  <div className="bg-green-800 border-2 border-white p-3">
                     <div className="flex space-x-2">
-                      <div
-                        className="w-2 h-2 bg-black animate-bounce"
-                        style={{ animationDelay: '0ms' }}
-                      ></div>
-                      <div
-                        className="w-2 h-2 bg-black animate-bounce"
-                        style={{ animationDelay: '150ms' }}
-                      ></div>
-                      <div
-                        className="w-2 h-2 bg-black animate-bounce"
-                        style={{ animationDelay: '300ms' }}
-                      ></div>
+                      <div className="w-2 h-2 bg-white animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                      <div className="w-2 h-2 bg-white animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                      <div className="w-2 h-2 bg-white animate-bounce" style={{ animationDelay: '300ms' }}></div>
                     </div>
                   </div>
                 </div>
@@ -688,29 +648,27 @@ export default function Home() {
               <div ref={messagesEndRef} />
             </div>
 
-            <div className="p-3 bg-white border-t-4 border-black">
+            <div className="p-3 bg-green-900 border-t-4 border-white">
               <form onSubmit={handleSubmit} className="flex items-center space-x-2">
                 <input
                   type="text"
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
-                  placeholder={isListening ? '>>> LISTENING... SPEAK NOW' : 'Type your message...'}
-                  className={`flex-1 p-2 border-2 border-black focus:outline-none transition-all text-sm ${
-                    isListening ? 'bg-black text-white placeholder-white font-mono' : 'bg-white text-black'
+                  placeholder={isListening ? ">>> LISTENING... SPEAK NOW" : "Type your message..."}
+                  className={`flex-1 p-2 border-2 border-white focus:outline-none transition-all text-sm ${
+                    isListening ? 'bg-green-950 text-white placeholder-gray-300 font-mono' : 'bg-green-800 text-white placeholder-gray-300'
                   }`}
-                  style={{
-                    fontFamily: isListening ? 'monospace' : '"Times New Roman", Times, serif',
-                  }}
+                  style={{ fontFamily: isListening ? 'monospace' : '"Times New Roman", Times, serif' }}
                   disabled={isLoading}
                   readOnly={isListening}
                 />
                 <button
                   type="button"
                   onClick={isRecording ? stopRecording : startRecording}
-                  className={`p-2 border-2 border-black transition-colors ${
+                  className={`p-2 border-2 border-white transition-colors ${
                     isRecording
-                      ? 'bg-black text-white animate-pulse'
-                      : 'bg-white text-black hover:opacity-60'
+                      ? 'bg-white text-green-900 animate-pulse'
+                      : 'bg-green-800 text-white hover:opacity-80'
                   }`}
                   disabled={isLoading || continuousListening}
                   title={continuousListening ? 'Mic is auto-managed in continuous mode' : 'Push to talk'}
@@ -719,7 +677,7 @@ export default function Home() {
                 </button>
                 <button
                   type="submit"
-                  className="p-2 bg-black text-white border-2 border-black hover:opacity-80 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="p-2 bg-green-800 text-white border-2 border-white hover:opacity-80 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
                   disabled={!input.trim() || isLoading}
                 >
                   <Send size={18} />
